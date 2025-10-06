@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int               @id @default(autoincrement())
+  userName          String            @unique
+  password          String
+}
+
+model Player {
+  id                Int               @id @default(autoincrement())
+  name              String            @unique
+  lastWinner        Boolean           @default(false)
+
+  tournaments1      Tournament[]      @relation("FirstPlace")
+  tournaments2      Tournament[]      @relation("SecondPlace")
+  tournaments3      Tournament[]      @relation("ThirdPlace")
+
+  teams             Team[]
+  participants      Participants[]
+}
+
+model Participants {
+  id                Int               @id @default(autoincrement())
+  playerId          Int
+  tournamentId      Int
+  points            Int               @default(0)
+
+  tournament        Tournament        @relation(fields: [tournamentId], references: [id])
+  player            Player            @relation(fields: [playerId], references: [id])
+
+  @@unique([playerId, tournamentId])
+}
+
+model Tournament {
+  id                Int               @id @default(autoincrement())
+  date              DateTime
+  location          String
+  numberPlayers     Int
+  numberGames       Int
+
+  firstPlaceId      Int?
+  secondPlaceId     Int?
+  thirdPlaceId      Int?
+
+  firstPlace        Player?           @relation("FirstPlace", fields: [firstPlaceId], references: [id])
+  secondPlace       Player?           @relation("SecondPlace", fields: [secondPlaceId], references: [id])
+  thirdPlace        Player?           @relation("ThirdPlace", fields: [thirdPlaceId], references: [id])
+
+  participants      Participants[]
+  tournamentGame    TournamentGame[]
+}
+
+model Team {
+  id                Int               @id @default(autoincrement())
+  teamNumber        Int
+  playerId          Int
+  tournamentGameId  Int
+  pointsWon         Int               @default(0)
+
+  tournamentGame    TournamentGame    @relation(fields: [tournamentGameId], references: [id])
+  player            Player            @relation(fields: [playerId], references: [id])
+}
+
+model TournamentGame {
+  id                Int               @id @default(autoincrement())
+  name              String            @unique
+  numberOfTeams     Int
+  playersPerTeam    Int
+  gameId            Int
+  tournamentId      Int
+
+  game              Game              @relation(fields: [gameId], references: [id])
+  tournament        Tournament        @relation(fields: [tournamentId], references: [id])
+  teams             Team[]
+}
+
+model Game {
+  id                Int               @id @default(autoincrement())
+  name              String            @unique
+
+  tournamentGame    TournamentGame[]
+}
