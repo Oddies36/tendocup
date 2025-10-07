@@ -11,7 +11,7 @@ export default async function TournamentPage({
   const { title } = await params;
   const decodedTitle = decodeURIComponent(title);
   return (
-    <main>
+    <main className="pt-20">
       <div className="bg-stone-200">
         <h1
           className={`${quantico.className} text-[40px] text-center mb-5 p-4`}
@@ -19,6 +19,8 @@ export default async function TournamentPage({
           {decodedTitle}
         </h1>
       </div>
+
+<div className="p-2 md:p-0">
 
       <div className="max-w-6xl mx-auto p-6 rounded-lg border bg-stone-200 shadow-md">
         <div className="border-l-4">
@@ -69,7 +71,8 @@ export default async function TournamentPage({
         <div className="border-l-4">
           <p className="ml-4 font-bold text-2xl">Classement</p>
         </div>
-        <div className="p-5">
+
+        <div className="p-5 max-w-full overflow-x-auto">
           <table className="table-auto border-collapse border border-stone-400 text-center">
             <thead className="bg-stone-200">
               <tr>
@@ -101,7 +104,9 @@ export default async function TournamentPage({
             </tbody>
           </table>
         </div>
+
       </div>
+</div>
     </main>
   );
 }

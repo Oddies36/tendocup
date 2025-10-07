@@ -21,6 +21,7 @@ const handler = NextAuth({
         const user = await prisma.user.findUnique({
           where: { userName: credentials.userName },
         });
+        
         if (!user) {
           return null;
         }
@@ -32,12 +33,29 @@ const handler = NextAuth({
 
         return {
           id: user.id.toString(),
-          userName: user.userName,
+          name: user.userName,
         };
       },
     }),
   ],
   session: { strategy: "jwt" },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = {
+          id: user.id,
+          name: user.name,
+        };
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token.user) {
+        session.user = token.user;
+      }
+      return session;
+    },
+  },
   secret: process.env.NEXTAUTH_SECRET,
 });
 

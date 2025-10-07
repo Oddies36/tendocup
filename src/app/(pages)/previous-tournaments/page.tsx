@@ -14,7 +14,7 @@ const tournaments = [
 
 export default function Previoustournaments() {
   return (
-    <main>
+    <main className="pt-20">
       {/* Div titre */}
       <div>
         <h1 className={`${quantico.className} text-[40px] text-center p-5 mb-5`}>
