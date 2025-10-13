@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Press_Start_2P, Modak } from "next/font/google";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Trophy, History, Plus, Crown, LogIn, PersonStanding, Gamepad } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const press = Press_Start_2P({
@@ -22,130 +22,166 @@ const modak = Modak({
 
 export default function Navbar() {
   const router = useRouter();
-
   const [open, setOpen] = useState(false);
 
-  async function handleNewTournament(){
-    try{
+  async function handleNewTournament() {
+    try {
       const res = await fetch("/api/tournament/new-tournament", { method: "POST" });
-  
-      if(!res.ok){
-        throw new Error("Erreur lors de la création du tournoi.")
+      
+      if (!res.ok) {
+        throw new Error("Erreur lors de la création du tournoi.");
       }
       const data = await res.json();
-
       router.push(`/tournament/${data.id}/setup`);
-    }
-    catch(error){
+    } catch (error) {
       console.log(error);
-      alert("Problème lors de la création du tournoi. Contactez le boss.")
+      alert("Problème lors de la création du tournoi. Contactez le boss.");
     }
   }
 
   return (
-    <nav className="bg-black/80 text-white fixed w-full z-50 backdrop-blur-sm">
-      <div className="p-5 relative">
-        <ul className="flex justify-between items-center">
-          {/* Bouton burger */}
+    <nav className="bg-gradient-to-r from-black via-zinc-900 to-black border-b-2 border-rose-600 text-white fixed w-full z-50 backdrop-blur-md shadow-lg shadow-rose-600/20">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Mobile menu button */}
           <button
             onClick={() => setOpen(!open)}
-            className="md:hidden relative z-50"
+            className="lg:hidden relative z-50 p-2 rounded-md hover:bg-rose-600/20 transition-colors"
             aria-label="Toggle menu"
           >
             {open ? (
-              <X size={28} className="text-white" />
+              <X size={24} className="text-rose-500" />
             ) : (
-              <Menu size={28} className="text-white" />
+              <Menu size={24} className="text-rose-500" />
             )}
           </button>
 
-          {/* ===== MENU MOBILE déroulant (amélioré, plein écran, fluide) ===== */}
-          <div
-            className={`
-              ${press.className}
-              absolute top-full left-0 w-full bg-black/90 text-white
-              flex flex-col items-center gap-5 py-6 text-sm
-              transition-all duration-300 ease-in-out md:hidden
-              ${open ? "opacity-100 max-h-96 translate-y-0" : "opacity-0 max-h-0 -translate-y-4"}
-            `}
-          >
-            <Link
-              onClick={() => setOpen(false)}
-              href="/"
-              className="transition-transform duration-300 hover:-translate-y-1 hover:scale-110 hover:text-red-500"
-            >
-              Accueil
-            </Link>
-            <Link
-              onClick={() => setOpen(false)}
-              href="/previous-tournaments"
-              className="transition-transform duration-300 hover:-translate-y-1 hover:scale-110 hover:text-red-500"
-            >
-              Tournois Précédents
-            </Link>
-            <Link
-              onClick={() => setOpen(false)}
-              href="/new-tournament"
-              className="transition-transform duration-300 hover:-translate-y-1 hover:scale-110 hover:text-red-500"
-            >
-              Nouveau Tournoi
-            </Link>
-            <Link
-              onClick={() => setOpen(false)}
-              href="/current-champion"
-              className="transition-transform duration-300 hover:-translate-y-1 hover:scale-110 hover:text-red-500"
-            >
-              Champion Actuel
-            </Link>
-            <Link
-              onClick={() => setOpen(false)}
-              href="/connection"
-              className="transition-transform duration-300 hover:-translate-y-1 hover:scale-110 hover:text-red-500"
-            >
-              Connexion
-            </Link>
-          </div>
+          {/* Logo */}
+          <Link href="/" className={`${modak.className} flex-shrink-0`}>
+            <div className="text-2xl sm:text-3xl bg-gradient-to-r from-rose-500 to-red-600 bg-clip-text text-transparent hover:from-rose-400 hover:to-red-500 transition-all duration-300">
+              TENDO CUP
+            </div>
+          </Link>
 
-          {/* Logo central */}
-          <div className={`${modak.className} text-rose-600`}>
-            <li className="text-3xl list-none">TENDO CUP</li>
-          </div>
-
-          {/* Liens desktop */}
-          <div
-            className={`${press.className} hidden md:flex gap-8 text-[clamp(0.6rem, 1vw + 0.5rem, 1rem)]`}
-          >
+          {/* Desktop Navigation */}
+          <div className={`${press.className} hidden lg:flex items-center space-x-1 xl:space-x-2`}>
             <Link href="/">
-              <li className="cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:text-red-500 list-none ">
-                Accueil
-              </li>
+              <div className="px-3 py-2 rounded-md text-xs whitespace-nowrap hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300 flex items-center gap-2">
+                <Trophy size={14} />
+                <span>Accueil</span>
+              </div>
             </Link>
+            
             <Link href="/previous-tournaments">
-              <li className="cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:text-red-500 list-none">
-                Tournois Précédents
-              </li>
+              <div className="px-3 py-2 rounded-md text-xs whitespace-nowrap hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300 flex items-center gap-2">
+                <History size={14} />
+                <span>Tournois Précédents</span>
+              </div>
             </Link>
-              <li onClick={handleNewTournament} className="cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:text-red-500 list-none">
-                Nouveau Tournoi
-              </li>
+            
+            <button
+              onClick={handleNewTournament}
+              className="px-3 py-2 rounded-md text-xs whitespace-nowrap hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300 flex items-center gap-2"
+            >
+              <Plus size={14} />
+              <span>Nouveau Tournoi</span>
+            </button>
+            
             <Link href="/current-champion">
-              <li className="cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:text-red-500 list-none">
-                Champion Actuel
-              </li>
+              <div className="px-3 py-2 rounded-md text-xs whitespace-nowrap hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300 flex items-center gap-2">
+                <Crown size={14} />
+                <span>Champion</span>
+              </div>
+            </Link>
+
+            <Link href="/players">
+              <div className="px-3 py-2 rounded-md text-xs whitespace-nowrap hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300 flex items-center gap-2">
+                <PersonStanding size={14} />
+                <span>Joueurs</span>
+              </div>
+            </Link>
+
+            <Link href="/games">
+              <div className="px-3 py-2 rounded-md text-xs whitespace-nowrap hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300 flex items-center gap-2">
+                <Gamepad size={14} />
+                <span>Jeux</span>
+              </div>
             </Link>
           </div>
 
-          {/* Lien Connexion séparé (inchangé) */}
-          <div
-            className={`${press.className} hidden md:flex flex-row gap-15 text-white`}
+          {/* Connection Button (Desktop) */}
+          <Link href="/connection" className="hidden lg:block">
+            <div className={`${press.className} px-4 py-2 rounded-md text-xs whitespace-nowrap bg-rose-600 hover:bg-rose-700 transition-all duration-300 flex items-center gap-2 shadow-lg shadow-rose-600/30`}>
+              <LogIn size={14} />
+              <span>Connexion</span>
+            </div>
+          </Link>
+
+          {/* Spacer for mobile */}
+          <div className="lg:hidden w-10"></div>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      <div
+        className={`lg:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+          open ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <div className={`${press.className} px-4 pt-2 pb-4 space-y-2 bg-black/95 border-t border-rose-600/30`}>
+          <Link href="/" onClick={() => setOpen(false)}>
+            <div className="flex items-center gap-3 px-4 py-3 rounded-md text-sm hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300">
+              <Trophy size={16} />
+              <span>Accueil</span>
+            </div>
+          </Link>
+          
+          <Link href="/previous-tournaments" onClick={() => setOpen(false)}>
+            <div className="flex items-center gap-3 px-4 py-3 rounded-md text-sm hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300">
+              <History size={16} />
+              <span>Tournois Précédents</span>
+            </div>
+          </Link>
+          
+          <button
+            onClick={() => {
+              handleNewTournament();
+              setOpen(false);
+            }}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-md text-sm hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300 text-left"
           >
-            <Link href="/connection">
-              <li className="cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:text-red-500 list-none">
-                Connexion
-              </li>
-            </Link>
-          </div>
-        </ul>
+            <Plus size={16} />
+            <span>Nouveau Tournoi</span>
+          </button>
+          
+          <Link href="/current-champion" onClick={() => setOpen(false)}>
+            <div className="flex items-center gap-3 px-4 py-3 rounded-md text-sm hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300">
+              <Crown size={16} />
+              <span>Champion Actuel</span>
+            </div>
+          </Link>
+
+          <Link href="/players" onClick={() => setOpen(false)}>
+            <div className="flex items-center gap-3 px-4 py-3 rounded-md text-sm hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300">
+              <PersonStanding size={16} />
+              <span>Joueurs</span>
+            </div>
+          </Link>
+
+          <Link href="/games" onClick={() => setOpen(false)}>
+            <div className="flex items-center gap-3 px-4 py-3 rounded-md text-sm hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300">
+              <Gamepad size={16} />
+              <span>Jeux</span>
+            </div>
+          </Link>
+          
+          <Link href="/connection" onClick={() => setOpen(false)}>
+            <div className="flex items-center gap-3 px-4 py-3 rounded-md text-sm bg-rose-600 hover:bg-rose-700 transition-all duration-300 mt-4">
+              <LogIn size={16} />
+              <span>Connexion</span>
+            </div>
+          </Link>
+        </div>
       </div>
     </nav>
   );
