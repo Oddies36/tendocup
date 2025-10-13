@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Press_Start_2P, Modak } from "next/font/google";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const press = Press_Start_2P({
   weight: "400",
@@ -20,7 +21,26 @@ const modak = Modak({
 });
 
 export default function Navbar() {
+  const router = useRouter();
+
   const [open, setOpen] = useState(false);
+
+  async function handleNewTournament(){
+    try{
+      const res = await fetch("/api/tournament/new-tournament", { method: "POST" });
+  
+      if(!res.ok){
+        throw new Error("Erreur lors de la création du tournoi.")
+      }
+      const data = await res.json();
+
+      router.push(`/tournament/${data.id}/setup`);
+    }
+    catch(error){
+      console.log(error);
+      alert("Problème lors de la création du tournoi. Contactez le boss.")
+    }
+  }
 
   return (
     <nav className="bg-black/80 text-white fixed w-full z-50 backdrop-blur-sm">
@@ -91,12 +111,12 @@ export default function Navbar() {
             <li className="text-3xl list-none">TENDO CUP</li>
           </div>
 
-          {/* Liens desktop (inchangés) */}
+          {/* Liens desktop */}
           <div
-            className={`${press.className} hidden md:flex flex-row gap-15 text-white`}
+            className={`${press.className} hidden md:flex gap-8 text-[clamp(0.6rem, 1vw + 0.5rem, 1rem)]`}
           >
             <Link href="/">
-              <li className="cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:text-red-500 list-none">
+              <li className="cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:text-red-500 list-none ">
                 Accueil
               </li>
             </Link>
@@ -105,11 +125,9 @@ export default function Navbar() {
                 Tournois Précédents
               </li>
             </Link>
-            <Link href="/new-tournament">
-              <li className="cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:text-red-500 list-none">
+              <li onClick={handleNewTournament} className="cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:text-red-500 list-none">
                 Nouveau Tournoi
               </li>
-            </Link>
             <Link href="/current-champion">
               <li className="cursor-pointer transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 hover:text-red-500 list-none">
                 Champion Actuel

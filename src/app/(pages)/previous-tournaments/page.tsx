@@ -17,7 +17,7 @@ export default function Previoustournaments() {
     <main className="pt-20">
       {/* Div titre */}
       <div>
-        <h1 className={`${quantico.className} text-[40px] text-center p-5 mb-5`}>
+        <h1 className={`${quantico.className} text-[40px] text-center p-10 mb-5`}>
           TOURNOIS PRÉCÉDENTS
         </h1>
       </div>

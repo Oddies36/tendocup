@@ -14,7 +14,7 @@ export default async function TournamentPage({
     <main className="pt-20">
       <div className="bg-stone-200">
         <h1
-          className={`${quantico.className} text-[40px] text-center mb-5 p-4`}
+          className={`${quantico.className} text-[40px] text-center mb-5 p-10`}
         >
           {decodedTitle}
         </h1>
