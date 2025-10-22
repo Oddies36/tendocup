@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 interface UpdateTournamentGameBody {
+  id: number;
   gameId: number;
   name: string;
   tournamentId: number;
@@ -26,17 +27,37 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const newTournamentGame = await prisma.tournamentGame.create({
-      data: {
-        gameId: data.gameId,
-        name: data.name,
-        tournamentId: data.tournamentId,
-        playersPerTeam: data.playersPerTeam,
-        numberOfTeams: data.numberOfTeams,
-      },
-    });
+    if(data?.id){
 
-    return NextResponse.json(newTournamentGame);
+      const updatedTournamentGame = await prisma.tournamentGame.update({
+        data: {
+          gameId: data.gameId,
+          name: data.name,
+          tournamentId: data.tournamentId,
+          playersPerTeam: data.playersPerTeam,
+          numberOfTeams: data.numberOfTeams,
+        },
+        where: {
+          id: data.id
+        }
+      });
+
+      return NextResponse.json(updatedTournamentGame);
+
+    }
+
+      const newTournamentGame = await prisma.tournamentGame.create({
+        data: {
+          gameId: data.gameId,
+          name: data.name,
+          tournamentId: data.tournamentId,
+          playersPerTeam: data.playersPerTeam,
+          numberOfTeams: data.numberOfTeams,
+        },
+      });
+  
+      return NextResponse.json(newTournamentGame);
+
   } catch (error) {
     console.error("Erreur lors de la création du tournoi :", error);
     return NextResponse.json(

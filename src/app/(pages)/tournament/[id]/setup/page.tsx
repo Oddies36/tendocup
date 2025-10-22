@@ -4,32 +4,64 @@ import prisma from "@/lib/prisma";
 import SetupClient from "./setupClient";
 
 interface Props {
-  params: Promise<{ id: string}>;
+  params: Promise<{ id: string }>;
 }
 
-export default async function Tournamentsetup({ params }: Props){
-
+export default async function TournamentSetup({ params }: Props) {
   const { id } = await params;
-  
   const tournamentId = Number(id);
 
-  
-
+  // Load tournament
   const tournament = await prisma.tournament.findUnique({
-    where: { id: tournamentId, status: "setup" }
+    where: { id: tournamentId, status: "setup" },
   });
 
-  const games = await prisma.game.findMany({
-    select: { id: true, name: true}
-  });
-
-  const players = await prisma.player.findMany({
-    select: {id: true, name: true, lastWinner: true}
-  });
-
-  if(!tournament){
+  if (!tournament) {
     notFound();
   }
 
-  return <SetupClient tournament={tournament} players={players} games={games} />
+  // All games
+  const games = await prisma.game.findMany({
+    select: { id: true, name: true },
+  });
+
+  // All possible players
+  const players = await prisma.player.findMany({
+    select: { id: true, name: true, lastWinner: true },
+  });
+
+  // Existing tournament games
+  const tournamentGames = await prisma.tournamentGame.findMany({
+    where: { tournamentId },
+    select: {
+      id: true,
+      name: true,
+      gameId: true,
+      playersPerTeam: true,
+      numberOfTeams: true,
+      tournamentId: true,
+    },
+    orderBy: { id: "asc" },
+  });
+
+const tournamentPlayers = await prisma.participants.findMany({
+  where: { tournamentId },
+  select: {
+    id: true,
+    tournamentId: true,
+    playerId: true,
+    points: true,
+  },
+  orderBy: { id: "asc" },
+});
+
+  return (
+    <SetupClient
+      tournament={tournament}
+      games={games}
+      players={players}
+      tournamentGames={tournamentGames}
+      tournamentPlayers={tournamentPlayers}
+    />
+  );
 }

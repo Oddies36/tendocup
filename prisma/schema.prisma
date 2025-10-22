@@ -77,7 +77,7 @@ model Team {
 
 model TournamentGame {
   id                Int               @id @default(autoincrement())
-  name              String            @unique
+  name              String            
   numberOfTeams     Int
   playersPerTeam    Int
   gameId            Int
