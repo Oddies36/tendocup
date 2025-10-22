@@ -1,18 +1,30 @@
 import { Quantico } from "next/font/google";
 import Link from "next/link";
+import prisma from "@/lib/prisma";
 
 const quantico = Quantico({ subsets: ["latin"], weight: "700" });
 
-const tournaments = [
-  { id: 1, title: "Tendo Cup 2022", date: "14 août 2022", location: "Hal"},
-  { id: 2, title: "Tendo Cup 2024", date: "06 octobre 2024", location: "Hal"},
-  { id: 3, title: "Tendo Cup 2025", date: "05 octobre 2025", location: "Hal"},
-  { id: 4, title: "Tendo Cup 2026", date: "05 octobre 2026", location: "Hal"},
-  { id: 5, title: "Tendo Cup 2027", date: "05 octobre 2027", location: "Hal"},
-];
 
 
-export default function Previoustournaments() {
+
+export default async function Previoustournaments() {
+
+    const tournaments = await prisma.tournament.findMany({
+      select: {
+        id: true,
+        title: true,
+        date: true,
+        location: true,
+        numberPlayers: true,
+        numberGames: true,
+        status: true,
+        firstPlaceId: true,
+        secondPlaceId: true,
+        thirdPlaceId: true
+      },
+      orderBy: { date: "asc" },
+    });
+
   return (
     <main className="pt-20">
       {/* Div titre */}
@@ -38,7 +50,7 @@ export default function Previoustournaments() {
                         <div className="text-center mb-2">
                           <h2 className={`${quantico.className} text-[20px] `}>{t.title}</h2>
                         </div>
-                        <p>Date: {t.date}</p>
+                        <p>Date: {t.date.toLocaleDateString("fr-FR")}</p>
                         <p>Location: {t.location}</p>
                     </div>
                   </Link>

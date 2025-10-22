@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
+  const { title, location } = await req.json();
   try {
     const newTournament = await prisma.tournament.create({
       data: {
         date: new Date(),
         status: "setup",
+        location,
+        title
       },
     });
 

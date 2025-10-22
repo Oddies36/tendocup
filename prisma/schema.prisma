@@ -46,6 +46,7 @@ model Participants {
 
 model Tournament {
   id                Int               @id @default(autoincrement())
+  title             String?           @unique
   date              DateTime
   location          String?
   numberPlayers     Int?
