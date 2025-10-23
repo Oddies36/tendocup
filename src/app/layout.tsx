@@ -1,7 +1,7 @@
 import "./globals.css";
 import { Press_Start_2P, Modak } from "next/font/google";
-import Link from "next/link";
 import Navbar from "./components/Navbar";
+import SessionProviderWrapper from "./components/SessionProviderWrapper";
 
 const press = Press_Start_2P({
   weight: "400",
@@ -23,12 +23,13 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-
   return (
     <html lang="fr">
       <body className="min-h-dvh bg-stone-300">
-        <Navbar></Navbar>
-        {children}
+        <SessionProviderWrapper>
+          <Navbar />
+          {children}
+        </SessionProviderWrapper>
       </body>
     </html>
   );

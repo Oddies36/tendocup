@@ -1,14 +1,11 @@
+import prisma from "@/lib/prisma";
+import CurrentChampionClient from "./CurrentChampionClient";
 
+export default async function CurrentChampion() {
+  const champion = await prisma.player.findFirst({
+    where: { lastWinner: true },
+    select: { name: true },
+  });
 
-export default function Currentchampion(){
-
-  return(
-    <main>
-      <div>
-        <h1 className="text-[4vw] text-center font-sans">
-          TOURNOIS PRÉCÉDENTS
-        </h1>
-      </div>
-    </main>
-  );
+  return <CurrentChampionClient champion={champion} />;
 }

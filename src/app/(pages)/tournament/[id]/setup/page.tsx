@@ -2,12 +2,14 @@ import { notFound } from "next/navigation";
 import prisma from "@/lib/prisma";
 
 import SetupClient from "./setupClient";
+import { requireAuth } from "@/lib/auth";
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
 export default async function TournamentSetup({ params }: Props) {
+  await requireAuth();
   const { id } = await params;
   const tournamentId = Number(id);
 

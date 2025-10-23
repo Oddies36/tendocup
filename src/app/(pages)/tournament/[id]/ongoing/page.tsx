@@ -1,11 +1,13 @@
 import prisma from "@/lib/prisma";
 import SetupClient from "./setupClient";
+import { requireAuth } from "@/lib/auth";
 
 interface Props {
   params: Promise<{ id: string }>;
 }
 
 export default async function Page({ params }: Props) {
+  await requireAuth();
   const { id } = await params;
   const tournamentIdParam = Number(id);
 

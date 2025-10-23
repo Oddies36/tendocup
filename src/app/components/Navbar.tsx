@@ -3,8 +3,19 @@
 import Link from "next/link";
 import { Press_Start_2P, Modak } from "next/font/google";
 import { useState } from "react";
-import { Menu, X, Trophy, History, Plus, Crown, LogIn, PersonStanding, Gamepad } from "lucide-react";
+import {
+  Menu,
+  X,
+  Trophy,
+  History,
+  Plus,
+  Crown,
+  LogIn,
+  PersonStanding,
+  Gamepad,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 const press = Press_Start_2P({
   weight: "400",
@@ -23,28 +34,14 @@ const modak = Modak({
 export default function Navbar() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-
-  // ADDED: modal state
   const [showModal, setShowModal] = useState(false);
   const [title, setTitle] = useState("");
   const [location, setLocation] = useState("");
 
-  async function handleNewTournament() {
-    try {
-      const res = await fetch("/api/tournament/new-tournament", { method: "POST" });
-      
-      if (!res.ok) {
-        throw new Error("Erreur lors de la création du tournoi.");
-      }
-      const data = await res.json();
-      router.push(`/tournament/${data.id}/setup`);
-    } catch (error) {
-      console.log(error);
-      alert("Problème lors de la création du tournoi. Contactez le boss.");
-    }
-  }
+  // Authentication state
+  const { data: session, status } = useSession();
 
-  // ADDED: create via modal (sends titre/location)
+  // Create tournament via modal
   async function createTournamentFromModal() {
     try {
       const res = await fetch("/api/tournament/new-tournament", {
@@ -62,6 +59,15 @@ export default function Navbar() {
     } catch (error) {
       console.error(error);
       alert("Problème lors de la création du tournoi. Contactez le boss.");
+    }
+  }
+
+  // Check auth before showing modal
+  function handleNewTournamentClick() {
+    if (status === "unauthenticated") {
+      router.push("/connection");
+    } else {
+      setShowModal(true);
     }
   }
 
@@ -91,30 +97,32 @@ export default function Navbar() {
             </Link>
 
             {/* Desktop Navigation */}
-            <div className={`${press.className} hidden lg:flex items-center space-x-1 xl:space-x-2`}>
+            <div
+              className={`${press.className} hidden lg:flex items-center space-x-1 xl:space-x-2`}
+            >
               <Link href="/">
                 <div className="px-3 py-2 rounded-md text-xs whitespace-nowrap hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300 flex items-center gap-2">
                   <Trophy size={14} />
                   <span>Accueil</span>
                 </div>
               </Link>
-              
+
               <Link href="/previous-tournaments">
                 <div className="px-3 py-2 rounded-md text-xs whitespace-nowrap hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300 flex items-center gap-2">
                   <History size={14} />
                   <span>Tournois Précédents</span>
                 </div>
               </Link>
-              
-              {/* CHANGED: open modal instead of creating immediately */}
+
+              {/* Auth check before opening modal */}
               <button
-                onClick={() => setShowModal(true)}
+                onClick={handleNewTournamentClick}
                 className="px-3 py-2 rounded-md text-xs whitespace-nowrap hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300 flex items-center gap-2"
               >
                 <Plus size={14} />
                 <span>Nouveau Tournoi</span>
               </button>
-              
+
               <Link href="/current-champion">
                 <div className="px-3 py-2 rounded-md text-xs whitespace-nowrap hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300 flex items-center gap-2">
                   <Crown size={14} />
@@ -137,15 +145,23 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Connection Button (Desktop) */}
-            <Link href="/connection" className="hidden lg:block">
-              <div className={`${press.className} px-4 py-2 rounded-md text-xs whitespace-nowrap bg-rose-600 hover:bg-rose-700 transition-all duration-300 flex items-center gap-2 shadow-lg shadow-rose-600/30`}>
-                <LogIn size={14} />
-                <span>Connexion</span>
+            {/* Connection / session info (Desktop) */}
+            {status === "authenticated" ? (
+              <div className="hidden lg:block text-xs text-gray-300">
+                Connecté en tant que{" "}
+                <span className="text-rose-400">{session.user.name}</span>
               </div>
-            </Link>
+            ) : (
+              <Link href="/connection" className="hidden lg:block">
+                <div
+                  className={`${press.className} px-4 py-2 rounded-md text-xs whitespace-nowrap bg-rose-600 hover:bg-rose-700 transition-all duration-300 flex items-center gap-2 shadow-lg shadow-rose-600/30`}
+                >
+                  <LogIn size={14} />
+                  <span>Connexion</span>
+                </div>
+              </Link>
+            )}
 
-            {/* Spacer for mobile */}
             <div className="lg:hidden w-10"></div>
           </div>
         </div>
@@ -156,37 +172,42 @@ export default function Navbar() {
             open ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          <div className={`${press.className} px-4 pt-2 pb-4 space-y-2 bg-black/95 border-t border-rose-600/30`}>
+          <div
+            className={`${press.className} px-4 pt-2 pb-4 space-y-2 bg-black/95 border-t border-rose-600/30`}
+          >
             <Link href="/" onClick={() => setOpen(false)}>
               <div className="flex items-center gap-3 px-4 py-3 rounded-md text-sm hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300">
                 <Trophy size={16} />
                 <span>Accueil</span>
               </div>
             </Link>
-            
+
             <Link href="/previous-tournaments" onClick={() => setOpen(false)}>
               <div className="flex items-center gap-3 px-4 py-3 rounded-md text-sm hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300">
                 <History size={16} />
                 <span>Tournois Précédents</span>
               </div>
             </Link>
-            
-            {/* CHANGED: close menu then open modal */}
+
             <button
               onClick={() => {
                 setOpen(false);
-                setShowModal(true);
+                if (status === "unauthenticated") {
+                  router.push("/connection");
+                } else {
+                  setShowModal(true);
+                }
               }}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-md text-sm hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300 text-left"
             >
               <Plus size={16} />
               <span>Nouveau Tournoi</span>
             </button>
-            
+
             <Link href="/current-champion" onClick={() => setOpen(false)}>
               <div className="flex items-center gap-3 px-4 py-3 rounded-md text-sm hover:bg-rose-600/20 hover:text-rose-400 transition-all duration-300">
                 <Crown size={16} />
-                <span>Champion Actuel</span>
+                <span>Champion</span>
               </div>
             </Link>
 
@@ -203,7 +224,7 @@ export default function Navbar() {
                 <span>Jeux</span>
               </div>
             </Link>
-            
+
             <Link href="/connection" onClick={() => setOpen(false)}>
               <div className="flex items-center gap-3 px-4 py-3 rounded-md text-sm bg-rose-600 hover:bg-rose-700 transition-all duration-300 mt-4">
                 <LogIn size={16} />
@@ -214,11 +235,13 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* ADDED: Modal (mounted only when open, sits above navbar) */}
+      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70">
           <div className="bg-zinc-900 text-white rounded-lg shadow-xl border border-rose-600 w-[90%] max-w-md p-6">
-            <h2 className="text-xl font-semibold mb-4 text-rose-400">Nouveau Tournoi</h2>
+            <h2 className="text-xl font-semibold mb-4 text-rose-400">
+              Nouveau Tournoi
+            </h2>
 
             <label className="block mb-2 text-sm">Titre</label>
             <input
