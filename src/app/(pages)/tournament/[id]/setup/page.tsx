@@ -11,7 +11,6 @@ export default async function TournamentSetup({ params }: Props) {
   const { id } = await params;
   const tournamentId = Number(id);
 
-  // Load tournament
   const tournament = await prisma.tournament.findUnique({
     where: { id: tournamentId, status: "setup" },
   });
@@ -20,17 +19,14 @@ export default async function TournamentSetup({ params }: Props) {
     notFound();
   }
 
-  // All games
   const games = await prisma.game.findMany({
     select: { id: true, name: true },
   });
 
-  // All possible players
   const players = await prisma.player.findMany({
     select: { id: true, name: true, lastWinner: true },
   });
 
-  // Existing tournament games
   const tournamentGames = await prisma.tournamentGame.findMany({
     where: { tournamentId },
     select: {
@@ -40,6 +36,7 @@ export default async function TournamentSetup({ params }: Props) {
       playersPerTeam: true,
       numberOfTeams: true,
       tournamentId: true,
+      isTieBreaker: true,
     },
     orderBy: { id: "asc" },
   });

@@ -16,7 +16,7 @@ export default async function TournamentPage({
         <h1
           className={`${quantico.className} text-[40px] text-center mb-5 p-10`}
         >
-          {decodedTitle}
+          {decodedTitle ?? "null" ? "Tendo Cup" : decodedTitle}
         </h1>
       </div>
 

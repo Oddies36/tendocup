@@ -81,10 +81,11 @@ model TournamentGame {
   name              String            
   numberOfTeams     Int
   playersPerTeam    Int
-  gameId            Int
+  gameId            Int?
   tournamentId      Int
+  isTieBreaker      Boolean           @default(false)
 
-  game              Game              @relation(fields: [gameId], references: [id])
+  game              Game?              @relation(fields: [gameId], references: [id])
   tournament        Tournament        @relation(fields: [tournamentId], references: [id])
   teams             Team[]
 }
