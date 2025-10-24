@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 
 import SetupClient from "./setupClient";
 import { requireAuth } from "@/lib/auth";
+export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ id: string }>;

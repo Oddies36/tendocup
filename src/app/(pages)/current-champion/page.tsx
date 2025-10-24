@@ -1,5 +1,7 @@
+export const dynamic = "force-dynamic";
 import prisma from "@/lib/prisma";
 import CurrentChampionClient from "./CurrentChampionClient";
+
 
 export default async function CurrentChampion() {
   const champion = await prisma.player.findFirst({

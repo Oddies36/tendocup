@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Crown } from "lucide-react";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+export const dynamic = "force-dynamic";
 
 const quantico = Quantico({ subsets: ["latin"], weight: "700" });
 

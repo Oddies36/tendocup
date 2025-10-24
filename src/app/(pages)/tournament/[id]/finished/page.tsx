@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
 import { Quantico } from "next/font/google";
 import { Trophy } from "lucide-react";
+export const dynamic = "force-dynamic";
 
 const quantico = Quantico({ subsets: ["latin"], weight: "700" });
 

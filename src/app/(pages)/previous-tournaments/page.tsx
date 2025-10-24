@@ -1,6 +1,7 @@
 import { Quantico } from "next/font/google";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
+export const dynamic = "force-dynamic";
 
 const quantico = Quantico({ subsets: ["latin"], weight: "700" });
 
