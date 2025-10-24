@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
+interface Ranking {
+  id: string;
+  playerId: number;
+  playerName: string;
+  rank: number;
+  score: number;
+}
+
 export async function PATCH(req: NextRequest) {
   try {
     const { tournamentId, tournamentGameId, rankings } = await req.json();
@@ -51,7 +59,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ message: "Aucune égalité à résoudre." });
 
     // --- Sort tied players according to tiebreaker result ---
-    const sortedTie = rankings.sort((a: any, b: any) => a.rank - b.rank);
+    const sortedTie = rankings.sort((a: Ranking, b: Ranking) => a.rank - b.rank);
 
     // --- Assign tie-breaker points (for display only) ---
     const totalPlayers = sortedTie.length;
@@ -73,7 +81,7 @@ export async function PATCH(req: NextRequest) {
     const anchorIndex = anchorRank - 1;
     const topBefore = finalRanking.slice(0, anchorIndex);
     const restAfter = finalRanking.slice(anchorIndex);
-    const resolvedTies = sortedTie.map((r: any) => r.playerId);
+    const resolvedTies = sortedTie.map((r: Ranking) => r.playerId);
     const merged = [...topBefore, ...resolvedTies, ...restAfter];
 
     // --- Update tournament podium ---

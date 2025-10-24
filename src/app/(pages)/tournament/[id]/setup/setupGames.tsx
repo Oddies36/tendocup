@@ -24,14 +24,14 @@ export default function SetupGames({ tournament, games }: SetupGamesProps) {
   >([]);
 
   useEffect(() => {
-  async function refreshTournament() {
-    const res = await fetch(`/api/tournament/get?id=${tournament.id}`);
-    if (!res.ok) return;
-    const data = await res.json();
-    tournament.numberPlayers = data.numberPlayers;
-  }
-  refreshTournament();
-}, [tournament.id, selectedNumberGames]);
+    async function refreshTournament() {
+      const res = await fetch(`/api/tournament/get?id=${tournament.id}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      tournament.numberPlayers = data.numberPlayers;
+    }
+    refreshTournament();
+  }, [tournament.id, selectedNumberGames]);
 
   useEffect(() => {
     refetchGames();
@@ -48,11 +48,17 @@ export default function SetupGames({ tournament, games }: SetupGamesProps) {
       const totalGames = Number(selectedNumberGames);
       if (!totalGames || isNaN(totalGames)) return;
 
-      const existingSelections = data.map((g: any) => ({
-        id: g.id,
-        gameId: g.gameId,
-        teamSize: g.playersPerTeam,
-      }));
+      const existingSelections = data.map(
+        (g: {
+          id: string | number;
+          gameId: string | number;
+          playersPerTeam: number;
+        }) => ({
+          id: g.id,
+          gameId: g.gameId,
+          teamSize: g.playersPerTeam,
+        })
+      );
 
       const remaining = Math.max(totalGames - existingSelections.length, 0);
       const empty = Array.from({ length: remaining }, () => ({
@@ -163,120 +169,123 @@ export default function SetupGames({ tournament, games }: SetupGamesProps) {
         <h2 className="text-xl sm:text-2xl font-medium mb-4 sm:mb-6 text-gray-900">
           Sélection des jeux
         </h2>
-      
 
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-6">
-        <span className="text-gray-800 font-medium text-sm sm:text-base">
-          Nombre de jeux :
-        </span>
-        <div className="relative w-full sm:w-48">
-          <button
-            onClick={() => setGamesOpen(!gamesOpen)}
-            className="bg-black/80 text-white px-4 py-2.5 w-full rounded-md flex justify-between items-center hover:bg-black transition"
-          >
-            <span>{selectedNumberGames}</span>
-            <svg
-              className="ml-2 w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 mb-6">
+          <span className="text-gray-800 font-medium text-sm sm:text-base">
+            Nombre de jeux :
+          </span>
+          <div className="relative w-full sm:w-48">
+            <button
+              onClick={() => setGamesOpen(!gamesOpen)}
+              className="bg-black/80 text-white px-4 py-2.5 w-full rounded-md flex justify-between items-center hover:bg-black transition"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
+              <span>{selectedNumberGames}</span>
+              <svg
+                className="ml-2 w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
 
-          {gamesOpen && (
-            <div className="absolute left-0 right-0 sm:right-auto mt-2 w-full sm:w-48 bg-white border rounded-md shadow-lg z-50">
-              {possibleNumGames.map((option) => (
-                <button
-                  key={option}
-                  onClick={() => {
-                    setSelectedNumberGames(option);
-                    setGamesOpen(false);
-                    updateNumberGames(option);
-                  }}
-                  className="block w-full text-left px-4 py-2.5 hover:bg-gray-100 transition"
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {selectedNumberGames !== "Sélectionner..." && (
-        <div className="space-y-4 sm:space-y-5">
-          {selections.map((sel, i) => (
-            <div
-              key={i}
-              className="flex flex-col gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg border"
-            >
-              <label className="text-sm sm:text-base font-medium text-gray-700">
-                Jeu {i + 1}
-              </label>
-
-              <div className="flex flex-col gap-3">
-                <select
-                  className="w-full border border-gray-300 p-2.5 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={sel.gameId ?? ""}
-                  onChange={(e) => handleChange(i, "gameId", e.target.value)}
-                >
-                  <option value="">Sélectionner un jeu...</option>
-                  {games.map((g) => (
-                    <option key={g.id} value={g.id}>
-                      {g.name}
-                    </option>
-                  ))}
-                </select>
-
-                <select
-                  className="w-full border border-gray-300 p-2.5 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={sel.teamSize ?? ""}
-                  onChange={(e) => handleChange(i, "teamSize", e.target.value)}
-                >
-                  <option value="">Sélectionner taille d'équipe...</option>
-                  {getValidTeamSizes().map((s) => (
-                    <option key={s} value={s}>
-                      {s === 1 ? "Free for all" : `${s}v${s}`}
-                    </option>
-                  ))}
-                </select>
+            {gamesOpen && (
+              <div className="absolute left-0 right-0 sm:right-auto mt-2 w-full sm:w-48 bg-white border rounded-md shadow-lg z-50">
+                {possibleNumGames.map((option) => (
+                  <button
+                    key={option}
+                    onClick={() => {
+                      setSelectedNumberGames(option);
+                      setGamesOpen(false);
+                      updateNumberGames(option);
+                    }}
+                    className="block w-full text-left px-4 py-2.5 hover:bg-gray-100 transition"
+                  >
+                    {option}
+                  </button>
+                ))}
               </div>
+            )}
+          </div>
+        </div>
 
-              <div className="flex flex-col sm:flex-row gap-2">
-                <button
-                  className="flex-1 bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 transition"
-                  onClick={() => {
-                    if (!sel.gameId || !sel.teamSize) {
-                      alert("Veuillez compléter les champs");
-                      return;
+        {selectedNumberGames !== "Sélectionner..." && (
+          <div className="space-y-4 sm:space-y-5">
+            {selections.map((sel, i) => (
+              <div
+                key={i}
+                className="flex flex-col gap-3 p-3 sm:p-4 bg-gray-50 rounded-lg border"
+              >
+                <label className="text-sm sm:text-base font-medium text-gray-700">
+                  Jeu {i + 1}
+                </label>
+
+                <div className="flex flex-col gap-3">
+                  <select
+                    className="w-full border border-gray-300 p-2.5 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    value={sel.gameId ?? ""}
+                    onChange={(e) => handleChange(i, "gameId", e.target.value)}
+                  >
+                    <option value="">Sélectionner un jeu...</option>
+                    {games.map((g) => (
+                      <option key={g.id} value={g.id}>
+                        {g.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    className="w-full border border-gray-300 p-2.5 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    value={sel.teamSize ?? ""}
+                    onChange={(e) =>
+                      handleChange(i, "teamSize", e.target.value)
                     }
-                    const g = games.find((x) => x.id === sel.gameId);
-                    if (!g) return;
-                    saveGameRow(sel.id, sel.gameId, g.name, sel.teamSize);
-                  }}
-                >
-                  Ajouter
-                </button>
+                  >
+                    <option value="">
+                      Sélectionner taille d&apos;équipe...
+                    </option>
+                    {getValidTeamSizes().map((s) => (
+                      <option key={s} value={s}>
+                        {s === 1 ? "Free for all" : `${s}v${s}`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                <button
-                  className="flex-1 bg-red-600 text-white px-4 py-2.5 rounded-md hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={() => deleteGame(sel.id)}
-                  disabled={!sel.id}
-                >
-                  Supprimer
-                </button>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <button
+                    className="flex-1 bg-blue-600 text-white px-4 py-2.5 rounded-md hover:bg-blue-700 transition"
+                    onClick={() => {
+                      if (!sel.gameId || !sel.teamSize) {
+                        alert("Veuillez compléter les champs");
+                        return;
+                      }
+                      const g = games.find((x) => x.id === sel.gameId);
+                      if (!g) return;
+                      saveGameRow(sel.id, sel.gameId, g.name, sel.teamSize);
+                    }}
+                  >
+                    Ajouter
+                  </button>
+
+                  <button
+                    className="flex-1 bg-red-600 text-white px-4 py-2.5 rounded-md hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => deleteGame(sel.id)}
+                    disabled={!sel.id}
+                  >
+                    Supprimer
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

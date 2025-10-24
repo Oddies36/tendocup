@@ -354,7 +354,7 @@ async function handleFinishTournament() {
           ) : (
             <div>
               <p className="text-gray-700 mb-4 text-center">
-                Sélectionnez l'équipe gagnante :
+                Sélectionnez l&apos;équipe gagnante :
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

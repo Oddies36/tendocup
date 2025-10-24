@@ -34,7 +34,7 @@ export default async function FinishedTournamentPage({ params }: Props) {
   if (tournament.status !== "finished")
     return (
       <main className="pt-24 text-center text-gray-600">
-        Ce tournoi n’est pas encore terminé.
+        Ce tournoi n&apos;est pas encore terminé.
       </main>
     );
 
@@ -183,7 +183,7 @@ export default async function FinishedTournamentPage({ params }: Props) {
           <div className="max-w-6xl mx-auto p-6 rounded-lg border bg-red-50 mt-4 shadow-md mb-4">
             <div className="border-l-4 border-red-600">
               <p className="ml-4 font-bold text-2xl text-red-700">
-                Deathmatch en cas d'égalités
+                {`Deathmatch en cas d'égalités`}
               </p>
             </div>
 

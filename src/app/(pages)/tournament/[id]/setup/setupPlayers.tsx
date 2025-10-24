@@ -68,7 +68,10 @@ async function refetchParticipants() {
     const total = Number(selectedNumberPlayers);
     if (!total || isNaN(total)) return;
 
-    const existing: Slot[] = data.map((p: any) => ({
+    const existing: Slot[] = data.map((p: {
+      id: number | string;
+      playerId: number | string;
+    }) => ({
       id: p.id,
       playerId: p.playerId,
     }));
