@@ -343,9 +343,9 @@ async function handleFinishTournament() {
                       }}
                     >
                       <option value="">—</option>
-                      <option value="1">🥇 1er</option>
-                      <option value="2">🥈 2e</option>
-                      <option value="3">🥉 3e</option>
+                      <option value="1">1er</option>
+                      <option value="2">2e</option>
+                      <option value="3">3e</option>
                     </select>
                   </div>
                 ))}
